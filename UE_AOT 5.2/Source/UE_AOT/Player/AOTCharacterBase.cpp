@@ -41,15 +41,15 @@ AAOTCharacterBase::AAOTCharacterBase()
 	//	GetMesh()->SetAnimInstanceClass(AnimInstanceClassRef.Class);
 	//}
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CharacterMeshRef(TEXT("/Game/Player/Mesh/Model_male.Model_male"));
-	if (CharacterMeshRef.Object)
-	{
-		GetMesh()->SetSkeletalMesh(CharacterMeshRef.Object);
-	}
+	//static ConstructorHelpers::FObjectFinder<USkeletalMesh> CharacterMeshRef(TEXT("/Game/Player/Mesh/Model_male.Model_male"));
+	//if (CharacterMeshRef.Object)
+	//{
+	//	GetMesh()->SetSkeletalMesh(CharacterMeshRef.Object);
+	//}
 
-	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRef(TEXT("/Game/Player/Animation/ABP/ABP_AOTPlayer.ABP_AOTPlayer_C"));
-	if (AnimInstanceClassRef.Class)
-	{
-		GetMesh()->SetAnimInstanceClass(AnimInstanceClassRef.Class);
-	}
+	//static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRef(TEXT("/Game/Player/Animation/ABP/ABP_AOTPlayer.ABP_AOTPlayer_C"));
+	//if (AnimInstanceClassRef.Class)
+	//{
+	//	GetMesh()->SetAnimInstanceClass(AnimInstanceClassRef.Class);
+	//}
 }

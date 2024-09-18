@@ -21,11 +21,11 @@ AAOTCharacterPlayer::AAOTCharacterPlayer()
 	//FollowCamera->bUsePawnControlRotation = false;
 
 	// Input
-	static ConstructorHelpers::FObjectFinder<UInputMappingContext> InputMappingContextRef(TEXT("/Game/Player/Input/IMC_Default.IMC_Default"));
-	if (nullptr != InputMappingContextRef.Object)
-	{
-		DefaultMappingContext = InputMappingContextRef.Object;
-	}
+	//static ConstructorHelpers::FObjectFinder<UInputMappingContext> InputMappingContextRef(TEXT("/Game/Player/Input/IMC_Default.IMC_Default"));
+	//if (nullptr != InputMappingContextRef.Object)
+	//{
+	//	DefaultMappingContext = InputMappingContextRef.Object;
+	//}
 
 	//static ConstructorHelpers::FObjectFinder<UInputAction> InputActionRef(TEXT("/Game/Player/Input/Actions/IA_Attack.IA_Attack"));
 
@@ -36,18 +36,18 @@ void AAOTCharacterPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
-	APlayerController* PlayerController = CastChecked<APlayerController>(GetController());
-	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-	{
-		Subsystem->AddMappingContext(DefaultMappingContext, 0);
-	}
+	//APlayerController* PlayerController = CastChecked<APlayerController>(GetController());
+	//if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+	//{
+	//	Subsystem->AddMappingContext(DefaultMappingContext, 0);
+	//}
 }
 
 void AAOTCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
+	//UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
 
 	//EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AAOTCharacterPlayer::Attack);
 }
