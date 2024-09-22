@@ -19,6 +19,6 @@ AGiantCollisionSocket::~AGiantCollisionSocket()
 
 void AGiantCollisionSocket::OnHit()
 {
-	
+	OwnerGiant->OnDamage(SocketType);
 }
 

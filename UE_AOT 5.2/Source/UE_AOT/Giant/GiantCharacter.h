@@ -7,6 +7,9 @@
 #include "../Interface/BasicAIInterface.h"
 #include "GiantCharacter.generated.h"
 
+class AGiantCollisionSocket;
+enum class EGiantSocketType;
+
 UCLASS()
 class UE_AOT_API AGiantCharacter : public ACharacter, public IBasicAIInterface
 {
@@ -18,6 +21,9 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+public:
+	void OnDamage(EGiantSocketType DamagedSocketType);
+	
 public:
 	void AttackHitCheck();
 
@@ -37,5 +43,5 @@ public:
 	void ReleaseAttack();
 
 	FAICharacterAttackFinished OnAttackFinished;
-
+	
 };

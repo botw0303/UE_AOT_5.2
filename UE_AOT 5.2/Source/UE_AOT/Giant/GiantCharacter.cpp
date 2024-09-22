@@ -7,6 +7,8 @@
 #include <GameFramework/CharacterMovementComponent.h>
 #include "Collision/CollisionDefine.h"
 #include "Giant/Animation/GiantAnimInstance.h"
+#include "Giant/CollisionSocket/GiantCollisionSocket.h"
+#include "VisualLogger/VisualLoggerTypes.h"
 
 // Sets default values
 AGiantCharacter::AGiantCharacter()
@@ -36,12 +38,48 @@ AGiantCharacter::AGiantCharacter()
 	{
 		GetMesh()->SetAnimInstanceClass(AnimClassRef.Class);
 	}
+
+	// Collision Socket Setting
+
+	static ConstructorHelpers::FClassFinder<AGiantCollisionSocket> CollisionSocketClassRef(
+		TEXT("/Game/Giant/Blueprint/BP_GiantCollisionSocket.BP_GiantCollisionSocket_C")
+	);
+	if(CollisionSocketClassRef.Class != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Collision Socket Class is null!"));
+		return;
+	}
+	
+	for(int i = 0; i < EGiantSocketTypeCnt; i++)
+	{
+		EGiantSocketType SocketType = static_cast<EGiantSocketType>(i);
+		FName SocketName = TEXT("Invalid");
+
+		if(const UEnum* Enum = FindObject<UEnum>(ANY_PACKAGE, TEXT("EGiantSocketType"), true))
+		{
+			SocketName = Enum->GetNameByValue(static_cast<int64>(SocketType));
+		}
+
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+
+		AGiantCollisionSocket* CollisionSocket = GetWorld()->SpawnActor<AGiantCollisionSocket>(CollisionSocketClassRef.Class, SpawnParams);
+		CollisionSocket->SocketType = SocketType;
+		CollisionSocket->OwnerGiant = this;
+
+		CollisionSocket->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);
+	}
 }
 
 // Called when the game starts or when spawned
 void AGiantCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	
+}
+
+void AGiantCharacter::OnDamage(EGiantSocketType DamagedSocketType)
+{
 	
 }
 
