@@ -5,10 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "../Interface/BasicAIInterface.h"
+#include "Giant/CollisionSocket/GiantCollisionSocket.h"
 #include "GiantCharacter.generated.h"
-
-class AGiantCollisionSocket;
-enum class EGiantSocketType;
 
 UCLASS()
 class UE_AOT_API AGiantCharacter : public ACharacter, public IBasicAIInterface

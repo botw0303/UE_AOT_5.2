@@ -44,6 +44,7 @@ AGiantCharacter::AGiantCharacter()
 	static ConstructorHelpers::FClassFinder<AGiantCollisionSocket> CollisionSocketClassRef(
 		TEXT("/Game/Giant/Blueprint/BP_GiantCollisionSocket.BP_GiantCollisionSocket_C")
 	);
+	
 	if(CollisionSocketClassRef.Class != nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Collision Socket Class is null!"));
@@ -80,7 +81,18 @@ void AGiantCharacter::BeginPlay()
 
 void AGiantCharacter::OnDamage(EGiantSocketType DamagedSocketType)
 {
+	FName SocketName = TEXT("Invalid");
+
+	if(const UEnum* Enum = FindObject<UEnum>(ANY_PACKAGE, TEXT("EGiantSocketType"), true))
+	{
+		SocketName = Enum->GetNameByValue(static_cast<int64>(DamagedSocketType));
+	}
 	
+	FName SocketBoneName = GetMesh()->GetSocketBoneName(SocketName);
+
+	GetMesh()->HideBoneByName(SocketBoneName, PBO_None);
+
+	// 해당 본 생성하기
 }
 
 void AGiantCharacter::AttackHitCheck()
