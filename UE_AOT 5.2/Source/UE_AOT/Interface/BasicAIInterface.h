@@ -24,16 +24,16 @@ class UE_AOT_API IBasicAIInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual float GetPatrolRadius() abstract;
-	virtual float GetDetectRange() abstract;
-	virtual float GetAttackRange() abstract;
-	virtual float GetTurnSpeed() abstract;
+	virtual float GetPatrolRadius() = 0;
+	virtual float GetDetectRange() = 0;
+	virtual float GetAttackRange() = 0;
+	virtual float GetTurnSpeed() = 0;
 
 public:
-	virtual UAnimInstance* GetAnimInstance() abstract;
+	virtual UAnimInstance* GetAnimInstance() = 0;
 
 public:
 	virtual void SetAIAttackDelegate(const FAICharacterAttackFinished& InOnAttackFinished) = 0;
-	virtual void AIAttack() abstract;
+	virtual void AIAttack() = 0;
 
 };
