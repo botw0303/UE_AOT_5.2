@@ -11,12 +11,9 @@
 // Sets default values
 AGiantCharacter::AGiantCharacter()
 {
-	GetCapsuleComponent()->InitCapsuleSize(60.f, 140.f);
-	GetCapsuleComponent()->SetCollisionProfileName(CPROFILE_CAPSULE);
-
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -140.f), FRotator(0.f, -90.f, 0.f));
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
+	GetMesh()->SetCollisionProfileName(TEXT("BlockAll"));
 
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 500.f, 0.f);
 	GetCharacterMovement()->MaxWalkSpeed = 100.f;
