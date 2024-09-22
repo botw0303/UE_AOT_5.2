@@ -51,3 +51,17 @@ void AAOTCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 	//EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AAOTCharacterPlayer::Attack);
 }
+
+bool AAOTCharacterPlayer::CheckAnchoredTargetIsGiant()
+{
+	isAnchored = true;
+	return isAnchored;
+}
+
+void AAOTCharacterPlayer::MoveActorToTargetStraight()
+{
+}
+
+void AAOTCharacterPlayer::Attack()
+{
+}
