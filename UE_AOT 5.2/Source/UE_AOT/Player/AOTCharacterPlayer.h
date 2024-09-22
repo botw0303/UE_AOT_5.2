@@ -26,7 +26,7 @@ public:
 
 public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	void CheckAnchoredTargetIsGiant();	// 앵커가 부착된 대상이 거인인지 확인하고 bool 값을 반환
+	void CheckAnchoredTargetIsGiant(FVector Start);	// 앵커가 부착된 대상이 거인인지 확인하고 bool 값을 반환
 	void MoveStraightActorToTarget();	// 사용자를 앵커가 부착된 위치를 향해 직선으로 이동
 	void Attack();						// 공격
 

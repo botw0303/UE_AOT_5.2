@@ -7,6 +7,9 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include <Collision/CollisionDefine.h>
+#include "Physics/AOTCollision.h"
+#include "Giant/GiantCharacter.h"
 
 AAOTCharacterPlayer::AAOTCharacterPlayer()
 {
@@ -52,9 +55,37 @@ void AAOTCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	//EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AAOTCharacterPlayer::Attack);
 }
 
-void AAOTCharacterPlayer::CheckAnchoredTargetIsGiant()
+void AAOTCharacterPlayer::CheckAnchoredTargetIsGiant(FVector Start)
 {
-	isAnchored = true;
+	TArray<FOverlapResult> OverlapResults;
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(Detect), false, this);
+
+	const float DetectRadius = 30.0f;
+
+	bool bResult = GetWorld()->OverlapMultiByChannel(
+		OverlapResults,
+		Start,
+		FQuat::Identity,
+		CHANNEL_AOTACTION,
+		FCollisionShape::MakeSphere(DetectRadius),
+		Params
+	);
+
+	if (bResult)
+	{
+		for (const auto& OverlapResult : OverlapResults)
+		{
+			APawn* Pawn = Cast<APawn>(OverlapResult.GetActor());
+			if (Pawn)
+			{
+				AGiantCharacter* GiantComponent = Pawn->FindComponentByClass<AGiantCharacter>();
+				if (GiantComponent)
+				{
+					isAnchoredToGiant = true;
+				}
+			}
+		}
+	}
 }
 
 void AAOTCharacterPlayer::MoveStraightActorToTarget()
