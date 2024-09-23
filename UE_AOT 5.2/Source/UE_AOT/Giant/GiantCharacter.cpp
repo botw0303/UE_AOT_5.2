@@ -97,13 +97,16 @@ void AGiantCharacter::BeginPlay()
 
 		CollisionSocket->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);
 	}
-	
-	OnDamage(EGiantSocketType::Shin_LSocket);
+
+	OnDamage(EGiantSocketType::Forearm_LSocket);
+	// OnDamage(EGiantSocketType::Forearm_RSocket);
+	// OnDamage(EGiantSocketType::Shin_LSocket);
+	// OnDamage(EGiantSocketType::Shin_RSocket);
 }
 
 void AGiantCharacter::OnDamage(EGiantSocketType DamagedSocketType)
 {
-	// GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->SetSimulatePhysics(true);
 
 	if(DamagedSocketType == EGiantSocketType::HeadSocket)
 	{
@@ -111,7 +114,7 @@ void AGiantCharacter::OnDamage(EGiantSocketType DamagedSocketType)
 		return;
 	}
 	
-	FName SocketName = TEXT("Invalid");
+	FName SocketName;
 
 	switch (DamagedSocketType) {
 	case EGiantSocketType::Forearm_LSocket:
