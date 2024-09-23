@@ -9,6 +9,7 @@
 UGiantAnimInstance::UGiantAnimInstance()
 {
 	MovingThreshould = 3.0f;
+	SetAbleStand(true);
 }
 
 void UGiantAnimInstance::BeginAttack()
@@ -22,6 +23,11 @@ void UGiantAnimInstance::AnimNotify_ReleaseAttack()
 	bIsAttack = false;
 	AGiantCharacter* GiantCharacter = Cast<AGiantCharacter>(Owner);
 	GiantCharacter->ReleaseAttack();
+}
+
+void UGiantAnimInstance::SetAbleStand(bool value)
+{
+	bAbleStand = value;
 }
 
 void UGiantAnimInstance::NativeInitializeAnimation()

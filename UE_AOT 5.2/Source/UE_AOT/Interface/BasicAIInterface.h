@@ -28,6 +28,7 @@ public:
 	virtual float GetDetectRange() = 0;
 	virtual float GetAttackRange() = 0;
 	virtual float GetTurnSpeed() = 0;
+	virtual bool GetAbleAttack() = 0;
 
 public:
 	virtual UAnimInstance* GetAnimInstance() = 0;
