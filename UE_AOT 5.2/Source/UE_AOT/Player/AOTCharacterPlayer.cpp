@@ -11,29 +11,11 @@
 #include "Physics/AOTCollision.h"
 #include "Giant/GiantCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include <Giant/CollisionSocket/GiantCollisionSocket.h>
 
 AAOTCharacterPlayer::AAOTCharacterPlayer()
 {
-	//// Camera
-	//CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	//CameraBoom->SetupAttachment(RootComponent);
-	//CameraBoom->TargetArmLength = 400.0f; // 4m
-	//CameraBoom->bUsePawnControlRotation = true;
-
-	//FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	//FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
-	//FollowCamera->bUsePawnControlRotation = false;
-
-	// Input
-	//static ConstructorHelpers::FObjectFinder<UInputMappingContext> InputMappingContextRef(TEXT("/Game/Player/Input/IMC_Default.IMC_Default"));
-	//if (nullptr != InputMappingContextRef.Object)
-	//{
-	//	DefaultMappingContext = InputMappingContextRef.Object;
-	//}
-
-	//static ConstructorHelpers::FObjectFinder<UInputAction> InputActionRef(TEXT("/Game/Player/Input/Actions/IA_Attack.IA_Attack"));
-
-
+	SetActorTickEnabled(true);
 }
 
 void AAOTCharacterPlayer::BeginPlay()
@@ -99,26 +81,79 @@ void AAOTCharacterPlayer::StraightBoost()
 	LaunchCharacter(BoostDirection * BoostSpeed, true, true);
 }
 
-void AAOTCharacterPlayer::StartStraightBoost(FVector Direction)
+void AAOTCharacterPlayer::StartStraightBoost(FVector Direction, FVector TargetVector)
 {
-	bIsStraightBoosting = true;
-
 	BoostDirection = Direction;
+	TargetVec = TargetVector;
 
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AAOTCharacterPlayer::StraightBoost, 0.5f, true);
-
-	GetCharacterMovement()->GravityScale = 0.0f;
+	bIsStraightBoosting = true;
 }
 
 void AAOTCharacterPlayer::StopStraightBoost()
 {
 	bIsStraightBoosting = false;
 
-	GetCharacterMovement()->GravityScale = 1.0f;
-
 	LaunchCharacter(FVector(0, 0, 0), true, true);
 }
 
 void AAOTCharacterPlayer::Attack()
 {
+	// GiantCollisionSocket <- 여기에 있는 OnHit 이것만 실행시키면 됨
+	TArray<FOverlapResult> OverlapResults;
+	FCollisionQueryParams CollisionQueryParam(SCENE_QUERY_STAT(Detect), false, this);
+
+	bool bResult = GetWorld()->OverlapMultiByChannel(
+		OverlapResults,
+		GetActorLocation(),
+		FQuat::Identity,
+		GAMETRACECHANNEL,
+		FCollisionShape::MakeSphere(AttackRange),
+		CollisionQueryParam
+	);
+
+	if (bResult)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Detact"));
+		for (const auto& OverlapResult : OverlapResults)
+		{
+			AActor* Actor = Cast<AActor>(OverlapResult.GetActor());
+			if (Actor)
+			{
+				UE_LOG(LogTemp, Log, TEXT("DetactActor"));
+				UE_LOG(LogTemp, Log, TEXT("Actor Name: %s"), *Actor->GetName());
+				AGiantCollisionSocket* CollisionSocket = Cast<AGiantCollisionSocket>(Actor);
+				if (CollisionSocket)
+				{
+					CollisionSocket->OnHit();
+					UE_LOG(LogTemp, Log, TEXT("Attack"));
+				}
+			}
+		}
+	}
 }
+
+void AAOTCharacterPlayer::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (bIsStraightBoosting)
+	{
+		float Distance = FVector::Dist(GetActorLocation(), TargetVec);
+		if (Distance <= Threshould || !bIsAnchoredToGiant)
+		{
+			UE_LOG(LogTemp, Log, TEXT("Stop Straight Boosting"));
+			StopStraightBoost();	// 이동 종료
+		}
+		else
+		{
+			StraightBoost(); // 이동 지속
+			UE_LOG(LogTemp, Log, TEXT("Straight Boosting"));
+		}
+	}
+}
+
+void AAOTCharacterPlayer::SetActorTickEnabled(bool bEnabled)
+{
+	PrimaryActorTick.SetTickFunctionEnable(bEnabled);
+}
+

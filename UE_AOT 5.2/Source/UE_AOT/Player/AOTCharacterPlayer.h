@@ -26,7 +26,13 @@ public:
 	bool bIsAnchoredToGiant;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Attack")
-	float BoostSpeed = 10.0f;
+	float BoostSpeed = 1000.0f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Attack")
+	float Threshould = 10.0f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Attack")
+	float AttackRange = 60.0f;
 
 public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -35,22 +41,28 @@ public:
 	void CheckAnchoredTargetIsGiant(FVector Start);	// 앵커가 부착된 대상이 거인인지 확인하고 bool 값을 반환
 
 	UFUNCTION(BlueprintCallable, Category = "Attack")
-	void StraightBoost();	// 사용자를 앵커가 부착된 위치를 향해 직선으로 이동
+	void StraightBoost();							// 사용자를 앵커가 부착된 위치를 향해 직선으로 이동 (Tick 마다 실행해서 지속 이동하도록)
 
 	UFUNCTION(BlueprintCallable, Category = "Attack")
-	void StartStraightBoost(FVector Direction);
+	void StartStraightBoost(FVector Direction, FVector TargetVector);		// 앵커가 부착된 방향을 저장하고 StraightBoost가 실행되도록 설정
 
 	UFUNCTION(BlueprintCallable, Category = "Attack")
-	void StopStraightBoost();
+	void StopStraightBoost();						// 앵커 위치에 도달 혹은 이동 중 스페이스바 입력이 끊기면 이동 중지 처리
 
 	UFUNCTION(BlueprintCallable, Category = "Attack")
-	void Attack();						// 공격
+	void Attack();									// 공격
+
+	virtual void Tick(float DeltaTime) override;
+
+	// Tick을 활성화하기 위한 플래그
+	virtual void SetActorTickEnabled(bool bEnabled);
 	
 private:
 	FTimerHandle TimerHandle;
 
 protected:
 	FVector BoostDirection;
+	FVector TargetVec;
 
 	// Character Control Section
 protected:
