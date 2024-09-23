@@ -126,6 +126,7 @@ void AAOTCharacterPlayer::Attack()
 				{
 					CollisionSocket->OnHit();
 					UE_LOG(LogTemp, Log, TEXT("Attack"));
+					return;
 				}
 			}
 		}
