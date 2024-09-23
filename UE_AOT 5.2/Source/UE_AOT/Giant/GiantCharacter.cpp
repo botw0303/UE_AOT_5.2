@@ -83,11 +83,27 @@ void AGiantCharacter::BeginPlay()
 	for(int i = 0; i < EGiantSocketTypeCnt; i++)
 	{
 		EGiantSocketType SocketType = static_cast<EGiantSocketType>(i);
-		FName SocketName = TEXT("Invalid");
+		FName SocketName;
 
-		if(const UEnum* Enum = FindObject<UEnum>(ANY_PACKAGE, TEXT("EGiantSocketType"), true))
-		{
-			SocketName = Enum->GetNameByValue(static_cast<int64>(SocketType));
+		switch (SocketType) {
+		case EGiantSocketType::HeadSocket:
+			SocketName = TEXT("HeadSocket");
+			break;
+		case EGiantSocketType::Forearm_LSocket:
+			SocketName = TEXT("Forearm_LSocket");
+			break;
+		case EGiantSocketType::Forearm_RSocket:
+			SocketName = TEXT("Forearm_RSocket");
+			break;
+		case EGiantSocketType::Shin_LSocket:
+			SocketName = TEXT("Shin_LSocket");
+			break;
+		case EGiantSocketType::Shin_RSocket:
+			SocketName = TEXT("Shin_RSocket");
+			break;
+		default:
+			SocketName = TEXT("Invalid");
+			break;
 		}
 		
 		FActorSpawnParameters SpawnParams;
