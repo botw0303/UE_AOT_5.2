@@ -5,6 +5,7 @@
 AGiantCollisionSocket::AGiantCollisionSocket()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	bIsValid = true;
 	
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollider"));
 	SphereComponent->InitSphereRadius(50.f);
@@ -33,8 +34,14 @@ void AGiantCollisionSocket::Tick(float DeltaSeconds)
 #endif
 }
 
-void AGiantCollisionSocket::OnHit() const
+void AGiantCollisionSocket::OnHit()
 {
+	if(!bIsValid)
+	{
+		return;
+	}
+	
+	bIsValid = false;
 	OwnerGiant->OnDamage(SocketType);
 }
 
