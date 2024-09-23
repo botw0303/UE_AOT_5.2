@@ -21,6 +21,9 @@ public:
 	void RunAI();
 	void StopAI();
 
+public:
+	void MoveToTarget(FVector TargetLocation);
+
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
 

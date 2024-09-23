@@ -18,7 +18,7 @@ AGiantCharacter::AGiantCharacter()
 	GetMesh()->SetCollisionProfileName(TEXT("BlockAll"));
 
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 500.f, 0.f);
-	GetCharacterMovement()->MaxWalkSpeed = 100.f;
+	GetCharacterMovement()->MaxWalkSpeed = 300.f;
 
 	AIControllerClass = AGiantAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -220,7 +220,7 @@ void AGiantCharacter::AttackHitCheck()
 
 float AGiantCharacter::GetPatrolRadius()
 {
-	return 800.f;
+	return 10000.f;
 }
 
 float AGiantCharacter::GetDetectRange()
