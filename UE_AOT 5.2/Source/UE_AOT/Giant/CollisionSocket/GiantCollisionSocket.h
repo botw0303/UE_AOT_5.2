@@ -20,7 +20,7 @@ enum class EGiantSocketType : uint8
 
 enum
 {
-	EGiantSocketTypeCnt = static_cast<int>(EGiantSocketType::Cnt) + 1,
+	EGiantSocketTypeCnt = static_cast<int>(EGiantSocketType::Cnt),
 };
 
 UCLASS()
@@ -36,7 +36,7 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 public:
-	void OnHit();
+	void OnHit() const;
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SocketCollision")

@@ -98,7 +98,7 @@ void AAOTCharacterPlayer::StopStraightBoost()
 
 void AAOTCharacterPlayer::Attack()
 {
-	// GiantCollisionSocket <- ¿©±â¿¡ ÀÖ´Â OnHit ÀÌ°Í¸¸ ½ÇÇà½ÃÅ°¸é µÊ
+	// GiantCollisionSocket <- ï¿½ï¿½ï¿½â¿¡ ï¿½Ö´ï¿½ OnHit ï¿½Ì°Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Å°ï¿½ï¿½ ï¿½ï¿½
 	TArray<FOverlapResult> OverlapResults;
 	FCollisionQueryParams CollisionQueryParam(SCENE_QUERY_STAT(Detect), false, this);
 
@@ -137,17 +137,26 @@ void AAOTCharacterPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+#if ENABLE_DRAW_DEBUG
+
+	FVector CapsuleOrigin = GetActorLocation();
+	float Radius = AttackRange;
+	FColor DrawColor = FColor::Yellow;
+	DrawDebugSphere(GetWorld(), CapsuleOrigin, Radius, 16, DrawColor);
+
+#endif
+
 	if (bIsStraightBoosting)
 	{
 		float Distance = FVector::Dist(GetActorLocation(), TargetVec);
 		if (Distance <= Threshould || !bIsAnchoredToGiant)
 		{
 			UE_LOG(LogTemp, Log, TEXT("Stop Straight Boosting"));
-			StopStraightBoost();	// ÀÌµ¿ Á¾·á
+			StopStraightBoost();	// ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½
 		}
 		else
 		{
-			StraightBoost(); // ÀÌµ¿ Áö¼Ó
+			StraightBoost(); // ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½
 			UE_LOG(LogTemp, Log, TEXT("Straight Boosting"));
 		}
 	}
