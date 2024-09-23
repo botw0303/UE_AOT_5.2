@@ -87,13 +87,19 @@ void AAOTCharacterPlayer::StartStraightBoost(FVector Direction, FVector TargetVe
 	TargetVec = TargetVector;
 
 	bIsStraightBoosting = true;
+	bCanAttack = true;
+
+	//AttackBoostTime = Distance / 
+
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AAOTCharacterPlayer::StopStraightBoost, CalcTimeBasedOnDistance(TargetVector), false);
 }
 
 void AAOTCharacterPlayer::StopStraightBoost()
 {
+	bCanAttack = false;
 	bIsStraightBoosting = false;
 
-	LaunchCharacter(FVector(0, 0, 0), true, true);
+	LaunchCharacter(BoostDirection * BoostSpeed / 3, true, true);
 }
 
 void AAOTCharacterPlayer::Attack()
@@ -131,6 +137,8 @@ void AAOTCharacterPlayer::Attack()
 			}
 		}
 	}
+
+	bCanAttack = false;
 }
 
 void AAOTCharacterPlayer::Tick(float DeltaTime)
@@ -148,10 +156,10 @@ void AAOTCharacterPlayer::Tick(float DeltaTime)
 
 	if (bIsStraightBoosting)
 	{
-		float Distance = FVector::Dist(GetActorLocation(), TargetVec);
-		if (Distance <= Threshould || !bIsAnchoredToGiant)
+		if (!bIsAnchoredToGiant)
 		{
 			UE_LOG(LogTemp, Log, TEXT("Stop Straight Boosting"));
+			if (bCanAttack) Attack();
 			StopStraightBoost();	// �̵� ����
 		}
 		else
@@ -167,3 +175,11 @@ void AAOTCharacterPlayer::SetActorTickEnabled(bool bEnabled)
 	PrimaryActorTick.SetTickFunctionEnable(bEnabled);
 }
 
+float AAOTCharacterPlayer::CalcTimeBasedOnDistance(FVector TargetLocation)
+{
+	float Distance = FVector::Dist(GetActorLocation(), TargetLocation);
+
+	float Time = (MaxTime / MaxDistance) * Distance;
+
+	return FMath::Clamp(Time, 0.0f, MaxTime);
+}

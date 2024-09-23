@@ -34,6 +34,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Attack")
 	float AttackRange = 60.0f;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Attack")
+	bool bCanAttack = false;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Attack")
+	float AttackBoostTime = 1.5f;
+
 public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -63,10 +69,17 @@ public:
 	
 private:
 	FTimerHandle TimerHandle;
+	float LastDistance;
 
 protected:
 	FVector BoostDirection;
 	FVector TargetVec;
+
+	const float MaxDistance = 10000.0f;  // 최대 거리
+	const float MaxTime = 4.0f;          // 최대 시간
+
+protected:
+	float CalcTimeBasedOnDistance(FVector TargetLocation);
 
 	// Character Control Section
 protected:
