@@ -33,7 +33,7 @@ void AGiantCollisionSocket::Tick(float DeltaSeconds)
 #endif
 }
 
-void AGiantCollisionSocket::OnHit()
+void AGiantCollisionSocket::OnHit() const
 {
 	OwnerGiant->OnDamage(SocketType);
 }
