@@ -111,19 +111,23 @@ void AAOTCharacterPlayer::Attack()
 		CollisionQueryParam
 	);
 
-#if ENABLE_DRAW_DEBUG
-
-	FColor DrawColor = FColor::Yellow;
-	DrawDebugSphere(GetWorld(), GetActorLocation(), AttackRange, 16, DrawColor);
-
-#endif
-
 	if (bResult)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Detact"));
 		for (const auto& OverlapResult : OverlapResults)
 		{
-			if (const AGiantCollisionSocket* CollisionSocket = Cast<AGiantCollisionSocket>(OverlapResult.GetActor()))
+			const AActor* Actor = Cast<AActor>(OverlapResult.GetActor());
+			if(Actor == nullptr)
+			{
+				continue;
+			}
+			
+			const float Distance = FVector::Dist(GetActorLocation(), Actor->GetActorLocation());
+			if (Distance > AttackRange)
+			{
+				continue;
+			}
+			
+			if (AGiantCollisionSocket* CollisionSocket = Cast<AGiantCollisionSocket>(OverlapResult.GetActor()))
 			{
 				if(!CollisionSocket->bIsValid)
 				{
@@ -140,6 +144,13 @@ void AAOTCharacterPlayer::Attack()
 void AAOTCharacterPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+#if ENABLE_DRAW_DEBUG
+
+	FColor DrawColor = FColor::Yellow;
+	DrawDebugSphere(GetWorld(), GetActorLocation(), AttackRange, 16, DrawColor);
+
+#endif
 
 	if (bIsStraightBoosting)
 	{
