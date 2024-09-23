@@ -10,6 +10,7 @@
 #include <Collision/CollisionDefine.h>
 #include "Physics/AOTCollision.h"
 #include "Giant/GiantCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 AAOTCharacterPlayer::AAOTCharacterPlayer()
 {
@@ -66,7 +67,7 @@ void AAOTCharacterPlayer::CheckAnchoredTargetIsGiant(FVector Start)
 		OverlapResults,
 		Start,
 		FQuat::Identity,
-		CHANNEL_AOTACTION,
+		GAMETRACECHANNEL,
 		FCollisionShape::MakeSphere(DetectRadius),
 		Params
 	);
@@ -78,18 +79,44 @@ void AAOTCharacterPlayer::CheckAnchoredTargetIsGiant(FVector Start)
 			APawn* Pawn = Cast<APawn>(OverlapResult.GetActor());
 			if (Pawn)
 			{
-				AGiantCharacter* GiantComponent = Pawn->FindComponentByClass<AGiantCharacter>();
+				AGiantCharacter* GiantComponent = Cast<	AGiantCharacter>(Pawn);
 				if (GiantComponent)
 				{
-					isAnchoredToGiant = true;
+					bIsAnchoredToGiant = true;
+					UE_LOG(LogTemp, Log, TEXT("Is Giant"));
 				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Log, TEXT("Is Not Giant"));
 			}
 		}
 	}
 }
 
-void AAOTCharacterPlayer::MoveStraightActorToTarget()
+void AAOTCharacterPlayer::StraightBoost()
 {
+	LaunchCharacter(BoostDirection * BoostSpeed, true, true);
+}
+
+void AAOTCharacterPlayer::StartStraightBoost(FVector Direction)
+{
+	bIsStraightBoosting = true;
+
+	BoostDirection = Direction;
+
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AAOTCharacterPlayer::StraightBoost, 0.5f, true);
+
+	GetCharacterMovement()->GravityScale = 0.0f;
+}
+
+void AAOTCharacterPlayer::StopStraightBoost()
+{
+	bIsStraightBoosting = false;
+
+	GetCharacterMovement()->GravityScale = 1.0f;
+
+	LaunchCharacter(FVector(0, 0, 0), true, true);
 }
 
 void AAOTCharacterPlayer::Attack()

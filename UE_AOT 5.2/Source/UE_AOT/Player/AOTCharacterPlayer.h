@@ -22,13 +22,35 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	bool isAnchored;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Attack")
+	bool bIsAnchoredToGiant;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Attack")
+	float BoostSpeed = 10.0f;
 
 public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION(BlueprintCallable, Category = "Attack")
 	void CheckAnchoredTargetIsGiant(FVector Start);	// 앵커가 부착된 대상이 거인인지 확인하고 bool 값을 반환
-	void MoveStraightActorToTarget();	// 사용자를 앵커가 부착된 위치를 향해 직선으로 이동
+
+	UFUNCTION(BlueprintCallable, Category = "Attack")
+	void StraightBoost();	// 사용자를 앵커가 부착된 위치를 향해 직선으로 이동
+
+	UFUNCTION(BlueprintCallable, Category = "Attack")
+	void StartStraightBoost(FVector Direction);
+
+	UFUNCTION(BlueprintCallable, Category = "Attack")
+	void StopStraightBoost();
+
+	UFUNCTION(BlueprintCallable, Category = "Attack")
 	void Attack();						// 공격
+	
+private:
+	FTimerHandle TimerHandle;
+
+protected:
+	FVector BoostDirection;
 
 	// Character Control Section
 protected:
@@ -49,4 +71,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> AttackAction;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Attack")
+	bool bIsStraightBoosting;
 };
