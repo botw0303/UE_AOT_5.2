@@ -100,7 +100,7 @@ void AGiantCharacter::BeginPlay()
 		CollisionSocket->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);
 	}
 
-	OnDamage(EGiantSocketType::Forearm_LSocket);
+	// OnDamage(EGiantSocketType::Forearm_LSocket);
 	// OnDamage(EGiantSocketType::Forearm_RSocket);
 	// OnDamage(EGiantSocketType::Shin_LSocket);
 	// OnDamage(EGiantSocketType::Shin_RSocket);
@@ -156,6 +156,8 @@ void AGiantCharacter::OnDamage(EGiantSocketType DamagedSocketType)
 		{
 			UGiantAnimInstance* GiantAnimInstance = Cast<UGiantAnimInstance>(GetAnimInstance());
 			GiantAnimInstance->SetAbleStand(false);
+			AGiantAIController* GiantAIController = Cast<AGiantAIController>(GetController());
+			GiantAIController->StopAI();
 		}
 		break;
 	}
