@@ -23,6 +23,9 @@ public:
 	UFUNCTION()
 	void AnimNotify_ReleaseAttack();
 
+public:
+	void SetAbleStand(bool value);
+
 protected:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
@@ -45,6 +48,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Giant)
 	uint8 bIsAttack : 1;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Giant)
+	uint8 bAbleStand : 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Giant)
 	float MovingThreshould;

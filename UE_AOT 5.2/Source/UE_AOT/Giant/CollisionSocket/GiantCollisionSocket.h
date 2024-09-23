@@ -33,6 +33,9 @@ public:
 	virtual ~AGiantCollisionSocket() override;
 
 public:
+	virtual void Tick(float DeltaSeconds) override;
+
+public:
 	void OnHit();
 
 public:

@@ -21,6 +21,7 @@ protected:
 
 public:
 	void OnDamage(EGiantSocketType DamagedSocketType);
+	void Die();
 	
 public:
 	void AttackHitCheck();
@@ -30,6 +31,7 @@ public:
 	virtual float GetDetectRange() override;
 	virtual float GetAttackRange() override;
 	virtual float GetTurnSpeed() override;
+	virtual bool GetAbleAttack() override;
 
 public:
 	virtual UAnimInstance* GetAnimInstance() override;
@@ -48,5 +50,8 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = "Separated Actor")
 	TMap<EGiantSocketType, TSubclassOf<AActor>> SeparateActor;
+
+	UPROPERTY(VisibleAnywhere, Category = "Attack")
+	uint8 bAbleAttack : 1;
 	
 };

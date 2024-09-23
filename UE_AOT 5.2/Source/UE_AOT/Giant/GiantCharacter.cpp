@@ -8,7 +8,6 @@
 #include "Collision/CollisionDefine.h"
 #include "Giant/Animation/GiantAnimInstance.h"
 #include "Giant/CollisionSocket/GiantCollisionSocket.h"
-#include "VisualLogger/VisualLoggerTypes.h"
 
 // Sets default values
 AGiantCharacter::AGiantCharacter()
@@ -78,14 +77,33 @@ AGiantCharacter::AGiantCharacter()
 void AGiantCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	bAbleAttack = true;
+	
 	for(int i = 0; i < EGiantSocketTypeCnt; i++)
 	{
 		EGiantSocketType SocketType = static_cast<EGiantSocketType>(i);
-		FName SocketName = TEXT("Invalid");
+		FName SocketName;
 
-		if(const UEnum* Enum = FindObject<UEnum>(ANY_PACKAGE, TEXT("EGiantSocketType"), true))
-		{
-			SocketName = Enum->GetNameByValue(static_cast<int64>(SocketType));
+		switch (SocketType) {
+		case EGiantSocketType::HeadSocket:
+			SocketName = TEXT("HeadSocket");
+			break;
+		case EGiantSocketType::Forearm_LSocket:
+			SocketName = TEXT("Forearm_LSocket");
+			break;
+		case EGiantSocketType::Forearm_RSocket:
+			SocketName = TEXT("Forearm_RSocket");
+			break;
+		case EGiantSocketType::Shin_LSocket:
+			SocketName = TEXT("Shin_LSocket");
+			break;
+		case EGiantSocketType::Shin_RSocket:
+			SocketName = TEXT("Shin_RSocket");
+			break;
+		default:
+			SocketName = TEXT("Invalid");
+			break;
 		}
 		
 		FActorSpawnParameters SpawnParams;
@@ -97,21 +115,22 @@ void AGiantCharacter::BeginPlay()
 
 		CollisionSocket->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);
 	}
-	
-	OnDamage(EGiantSocketType::Shin_LSocket);
+
+	// OnDamage(EGiantSocketType::Forearm_LSocket);
+	// OnDamage(EGiantSocketType::Forearm_RSocket);
+	// OnDamage(EGiantSocketType::Shin_LSocket);
+	// OnDamage(EGiantSocketType::Shin_RSocket);
 }
 
 void AGiantCharacter::OnDamage(EGiantSocketType DamagedSocketType)
 {
-	// GetMesh()->SetSimulatePhysics(true);
-
 	if(DamagedSocketType == EGiantSocketType::HeadSocket)
 	{
-		// dead
+		Die();
 		return;
 	}
 	
-	FName SocketName = TEXT("Invalid");
+	FName SocketName;
 
 	switch (DamagedSocketType) {
 	case EGiantSocketType::Forearm_LSocket:
@@ -139,6 +158,32 @@ void AGiantCharacter::OnDamage(EGiantSocketType DamagedSocketType)
 	AActor* SpawnActor = GetWorld()->SpawnActor<AActor>(SeparateActor[DamagedSocketType], BoneTransform);
 	SpawnActor->SetActorScale3D(GetTransform().GetScale3D());
 	SpawnActor->SetLifeSpan(5.f);
+
+	switch (DamagedSocketType)
+	{
+	case EGiantSocketType::Forearm_LSocket:
+	case EGiantSocketType::Forearm_RSocket:
+		{
+			bAbleAttack = false;
+		}
+		break;
+	case EGiantSocketType::Shin_LSocket:
+	case EGiantSocketType::Shin_RSocket:
+		{
+			UGiantAnimInstance* GiantAnimInstance = Cast<UGiantAnimInstance>(GetAnimInstance());
+			GiantAnimInstance->SetAbleStand(false);
+			AGiantAIController* GiantAIController = Cast<AGiantAIController>(GetController());
+			GiantAIController->StopAI();
+		}
+		break;
+	}
+}
+
+void AGiantCharacter::Die()
+{
+	GetMesh()->SetAnimationMode(EAnimationMode::Type::AnimationSingleNode);
+	GetMesh()->Stop();
+	GetMesh()->SetSimulatePhysics(true);
 }
 
 void AGiantCharacter::AttackHitCheck()
@@ -191,6 +236,11 @@ float AGiantCharacter::GetAttackRange()
 float AGiantCharacter::GetTurnSpeed()
 {
 	return 1.f;
+}
+
+bool AGiantCharacter::GetAbleAttack()
+{
+	return bAbleAttack;
 }
 
 UAnimInstance* AGiantCharacter::GetAnimInstance()
