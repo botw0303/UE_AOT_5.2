@@ -41,5 +41,12 @@ public:
 	void ReleaseAttack();
 
 	FAICharacterAttackFinished OnAttackFinished;
+
+public:
+	UPROPERTY(VisibleAnywhere, Category = "CollisionSocket")
+	TSubclassOf<AGiantCollisionSocket> GiantCollisionSocketClass;
+	
+	UPROPERTY(EditAnywhere, Category = "Separated Actor")
+	TMap<EGiantSocketType, TSubclassOf<AActor>> SeparateActor;
 	
 };
