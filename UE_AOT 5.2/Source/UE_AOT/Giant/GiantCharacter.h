@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "../Interface/BasicAIInterface.h"
+#include "Giant/CollisionSocket/GiantCollisionSocket.h"
 #include "GiantCharacter.generated.h"
 
 UCLASS()
@@ -18,6 +19,9 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+public:
+	void OnDamage(EGiantSocketType DamagedSocketType);
+	
 public:
 	void AttackHitCheck();
 
@@ -38,4 +42,11 @@ public:
 
 	FAICharacterAttackFinished OnAttackFinished;
 
+public:
+	UPROPERTY(VisibleAnywhere, Category = "CollisionSocket")
+	TSubclassOf<AGiantCollisionSocket> GiantCollisionSocketClass;
+	
+	UPROPERTY(EditAnywhere, Category = "Separated Actor")
+	TMap<EGiantSocketType, TSubclassOf<AActor>> SeparateActor;
+	
 };

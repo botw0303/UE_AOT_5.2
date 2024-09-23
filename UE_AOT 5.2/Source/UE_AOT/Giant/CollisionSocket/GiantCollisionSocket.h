@@ -10,11 +10,17 @@ class USphereComponent;
 UENUM()
 enum class EGiantSocketType : uint8
 {
-	Head		UMETA(DisplayName = "Head"),
-	Forearm_L	UMETA(DisplayName = "Forearm_L"),
-	Forearm_R	UMETA(DisplayName = "Forearm_R"),
-	Shin_L		UMETA(DisplayName = "Shin_L"),
-	Shin_R		UMETA(DisplayName = "Shin_R"),
+	HeadSocket			UMETA(DisplayName = "HeadSocket"),
+	Forearm_LSocket		UMETA(DisplayName = "Forearm_LSocket"),
+	Forearm_RSocket		UMETA(DisplayName = "Forearm_RSocket"),
+	Shin_LSocket		UMETA(DisplayName = "Shin_LSocket"),
+	Shin_RSocket		UMETA(DisplayName = "Shin_RSocket"),
+	Cnt			
+};
+
+enum
+{
+	EGiantSocketTypeCnt = static_cast<int>(EGiantSocketType::Cnt) + 1,
 };
 
 UCLASS()
