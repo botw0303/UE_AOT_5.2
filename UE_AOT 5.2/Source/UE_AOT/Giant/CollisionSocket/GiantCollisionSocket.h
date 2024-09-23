@@ -36,7 +36,7 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 public:
-	void OnHit() const;
+	void OnHit();
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SocketCollision")
@@ -47,5 +47,8 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "SocketCollision")
 	EGiantSocketType SocketType;
+
+	UPROPERTY(VisibleAnywhere, Category = "SocketCollision")
+	uint8 bIsValid : 1;
 	
 };

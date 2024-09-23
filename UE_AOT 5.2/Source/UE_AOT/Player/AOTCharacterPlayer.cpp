@@ -87,19 +87,13 @@ void AAOTCharacterPlayer::StartStraightBoost(FVector Direction, FVector TargetVe
 	TargetVec = TargetVector;
 
 	bIsStraightBoosting = true;
-	bCanAttack = true;
-
-	//AttackBoostTime = Distance / 
-
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AAOTCharacterPlayer::StopStraightBoost, CalcTimeBasedOnDistance(TargetVector), false);
 }
 
 void AAOTCharacterPlayer::StopStraightBoost()
 {
-	bCanAttack = false;
 	bIsStraightBoosting = false;
 
-	LaunchCharacter(BoostDirection * BoostSpeed / 3, true, true);
+	LaunchCharacter(FVector(0, 0, 0), true, true);
 }
 
 void AAOTCharacterPlayer::Attack()
@@ -119,26 +113,32 @@ void AAOTCharacterPlayer::Attack()
 
 	if (bResult)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Detact"));
 		for (const auto& OverlapResult : OverlapResults)
 		{
-			AActor* Actor = Cast<AActor>(OverlapResult.GetActor());
-			if (Actor)
+			const AActor* Actor = Cast<AActor>(OverlapResult.GetActor());
+			if(Actor == nullptr)
 			{
-				UE_LOG(LogTemp, Log, TEXT("DetactActor"));
-				UE_LOG(LogTemp, Log, TEXT("Actor Name: %s"), *Actor->GetName());
-				AGiantCollisionSocket* CollisionSocket = Cast<AGiantCollisionSocket>(Actor);
-				if (CollisionSocket)
+				continue;
+			}
+			
+			const float Distance = FVector::Dist(GetActorLocation(), Actor->GetActorLocation());
+			if (Distance > AttackRange)
+			{
+				continue;
+			}
+			
+			if (AGiantCollisionSocket* CollisionSocket = Cast<AGiantCollisionSocket>(OverlapResult.GetActor()))
+			{
+				if(!CollisionSocket->bIsValid)
 				{
-					CollisionSocket->OnHit();
-					UE_LOG(LogTemp, Log, TEXT("Attack"));
-					return;
+					continue;
 				}
+				
+				CollisionSocket->OnHit();
+				return;
 			}
 		}
 	}
-
-	bCanAttack = false;
 }
 
 void AAOTCharacterPlayer::Tick(float DeltaTime)
@@ -147,19 +147,17 @@ void AAOTCharacterPlayer::Tick(float DeltaTime)
 
 #if ENABLE_DRAW_DEBUG
 
-	FVector CapsuleOrigin = GetActorLocation();
-	float Radius = AttackRange;
 	FColor DrawColor = FColor::Yellow;
-	DrawDebugSphere(GetWorld(), CapsuleOrigin, Radius, 16, DrawColor);
+	DrawDebugSphere(GetWorld(), GetActorLocation(), AttackRange, 16, DrawColor);
 
 #endif
 
 	if (bIsStraightBoosting)
 	{
-		if (!bIsAnchoredToGiant)
+		float Distance = FVector::Dist(GetActorLocation(), TargetVec);
+		if (Distance <= Threshould || !bIsAnchoredToGiant)
 		{
 			UE_LOG(LogTemp, Log, TEXT("Stop Straight Boosting"));
-			if (bCanAttack) Attack();
 			StopStraightBoost();	// �̵� ����
 		}
 		else
@@ -175,11 +173,3 @@ void AAOTCharacterPlayer::SetActorTickEnabled(bool bEnabled)
 	PrimaryActorTick.SetTickFunctionEnable(bEnabled);
 }
 
-float AAOTCharacterPlayer::CalcTimeBasedOnDistance(FVector TargetLocation)
-{
-	float Distance = FVector::Dist(GetActorLocation(), TargetLocation);
-
-	float Time = (MaxTime / MaxDistance) * Distance;
-
-	return FMath::Clamp(Time, 0.0f, MaxTime);
-}
