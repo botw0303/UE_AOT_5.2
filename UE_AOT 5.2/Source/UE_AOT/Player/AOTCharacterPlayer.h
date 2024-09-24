@@ -50,6 +50,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "AutoLockOn")
 	TSubclassOf<AActor> TargetWidgetBPActor; 
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "AutoLockOn")
+	bool bIsAutoLockingNow = false;
+
+	UPROPERTY(BlueprintReadOnly, Category = "AutoLockOn")
+	FVector LockingLocation;
+
 public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

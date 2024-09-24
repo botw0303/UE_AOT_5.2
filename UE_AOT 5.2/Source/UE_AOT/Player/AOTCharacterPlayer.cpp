@@ -122,6 +122,8 @@ void AAOTCharacterPlayer::Attack()
 		CollisionQueryParam
 	);
 
+	UE_LOG(LogTemp, Log, TEXT("Try Attack"));
+
 	if (bResult)
 	{
 		for (const auto& OverlapResult : OverlapResults)
@@ -132,11 +134,15 @@ void AAOTCharacterPlayer::Attack()
 				continue;
 			}
 
+			UE_LOG(LogTemp, Log, TEXT("Try Attack2"));
+
 			const float Distance = FVector::Dist(GetActorLocation(), Actor->GetActorLocation());
 			if (Distance > AttackRange)
 			{
 				continue;
 			}
+
+			UE_LOG(LogTemp, Log, TEXT("Try Attack3"));
 
 			if (AGiantCollisionSocket* CollisionSocket = Cast<AGiantCollisionSocket>(OverlapResult.GetActor()))
 			{
@@ -144,6 +150,8 @@ void AAOTCharacterPlayer::Attack()
 				{
 					continue;
 				}
+
+				UE_LOG(LogTemp, Log, TEXT("Try Attack4"));
 
 				CollisionSocket->OnHit();
 				return;
@@ -225,12 +233,15 @@ void AAOTCharacterPlayer::CheckAimRay()
 					FVector SocketLocation = CollisionSocket->GetActorLocation();
 					TargetWidgetActor->SetActorHiddenInGame(false);
 					TargetWidgetActor->SetActorLocation(SocketLocation);
+					bIsAutoLockingNow = true;
+					LockingLocation = SocketLocation;
 					return;
 				}
 			}
 		}
 	}
 
+	bIsAutoLockingNow = false;
 	TargetWidgetActor->SetActorHiddenInGame(true);
 }
 
@@ -327,3 +338,10 @@ float AAOTCharacterPlayer::CalcTimeBasedOnDistance(FVector TargetLocation)
 
 	return FMath::Clamp(Time, 0.0f, MaxTime);
 }
+
+
+
+
+
+
+
