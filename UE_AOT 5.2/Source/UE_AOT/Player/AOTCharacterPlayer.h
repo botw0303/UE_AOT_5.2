@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "Player/AOTCharacterBase.h"
 #include "InputActionValue.h"
+#include <Giant/CollisionSocket/GiantCollisionSocket.h>
+#include "Camera/CameraComponent.h"
 #include "AOTCharacterPlayer.generated.h"
 
 /**
@@ -37,8 +39,16 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Attack")
 	bool bCanAttack = false;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Attack")
-	float AttackBoostTime = 1.5f;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "AutoLockOn")
+	TArray<AGiantCollisionSocket*> GiantColSockets;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "AutoLockOn")
+	float AutoLockDetectRange = 5000.0f;
+
+	UCameraComponent* Camera;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "AutoLockOn")
+	TObjectPtr<class UWidgetComponent> TargetWidget;
 
 public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -58,9 +68,24 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Attack")
 	void Attack();														// 공격
 
-/*	UFUNCTION(BlueprintCallable, Category = "Auto LockOn")
-	void FindNearbyGiants();*/											// 주변 거인을 탐색
+	UFUNCTION(BlueprintCallable, Category = "Auto LockOn")
+	void FindNearbyGiants();											// 주변 GiantCollisionSocket을 탐색
 
+	UFUNCTION(BlueprintCallable, Category = "Auto LockOn")
+	void CheckAimRay();
+
+	UFUNCTION(BlueprintCallable, Category = "Auto LockOn")
+	void ShowObjectLocationOnUI(FVector SocketLocation);
+
+	UFUNCTION(BlueprintCallable, Category = "Auto LockOn")
+	void UpdateUIPosition(FVector2D ScreenPosition);
+
+	UFUNCTION(BlueprintCallable, Category = "Auto LockOn")
+	void AutoLockOn();													// 에임이 가리키는 곳이 거인의 부위 중 하나이며 자동 록온 범위 이내일 경우 앵커를 자동으로 부위의 공격 범위 중앙에 부착시켜 줌
+
+
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	void SetCameraComponent(UCameraComponent* CameraComponent);
 
 	virtual void Tick(float DeltaTime) override;
 
@@ -77,6 +102,7 @@ protected:
 
 	const float MaxDistance = 10000.0f;  // 최대 거리
 	const float MaxTime = 4.0f;          // 최대 시간
+
 
 protected:
 	float CalcTimeBasedOnDistance(FVector TargetLocation);
