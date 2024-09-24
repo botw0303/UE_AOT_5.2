@@ -13,5 +13,13 @@ UCLASS()
 class UE_AOT_API UAOTAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
+
+public:
+	UFUNCTION()
+	void AnimNotify_ReleaseAttack();
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack")
+	uint8 bIsAttack : 1;
 	
 };
