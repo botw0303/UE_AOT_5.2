@@ -9,6 +9,9 @@
 #include "Camera/CameraComponent.h"
 #include "AOTCharacterPlayer.generated.h"
 
+class UNiagaraComponent;
+class UNiagaraSystem;
+
 /**
  * 
  */
@@ -60,22 +63,22 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Attack")
-	void CheckAnchoredTargetIsGiant(FVector Start);						// ¾ÞÄ¿°¡ ºÎÂøµÈ ´ë»óÀÌ °ÅÀÎÀÎÁö È®ÀÎÇÏ°í bool °ªÀ» ¹ÝÈ¯
+	void CheckAnchoredTargetIsGiant(FVector Start);						// ï¿½ï¿½Ä¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½Ï°ï¿½ bool ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 
 	UFUNCTION(BlueprintCallable, Category = "Attack")
-	void StraightBoost();												// »ç¿ëÀÚ¸¦ ¾ÞÄ¿°¡ ºÎÂøµÈ À§Ä¡¸¦ ÇâÇØ Á÷¼±À¸·Î ÀÌµ¿ (Tick ¸¶´Ù ½ÇÇàÇØ¼­ Áö¼Ó ÀÌµ¿ÇÏµµ·Ï)
+	void StraightBoost();												// ï¿½ï¿½ï¿½ï¿½Ú¸ï¿½ ï¿½ï¿½Ä¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ (Tick ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Ïµï¿½ï¿½ï¿½)
 
 	UFUNCTION(BlueprintCallable, Category = "Attack")
-	void StartStraightBoost(FVector Direction, FVector TargetVector);	// ¾ÞÄ¿°¡ ºÎÂøµÈ ¹æÇâÀ» ÀúÀåÇÏ°í StraightBoost°¡ ½ÇÇàµÇµµ·Ï ¼³Á¤
+	void StartStraightBoost(FVector Direction, FVector TargetVector);	// ï¿½ï¿½Ä¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ StraightBoostï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Çµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 	UFUNCTION(BlueprintCallable, Category = "Attack")
-	void StopStraightBoost();											// ¾ÞÄ¿ À§Ä¡¿¡ µµ´Þ È¤Àº ÀÌµ¿ Áß ½ºÆäÀÌ½º¹Ù ÀÔ·ÂÀÌ ²÷±â¸é ÀÌµ¿ ÁßÁö Ã³¸®
+	void StopStraightBoost();											// ï¿½ï¿½Ä¿ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È¤ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
 
 	UFUNCTION(BlueprintCallable, Category = "Attack")
-	void Attack();														// °ø°Ý
+	void Attack();														// ï¿½ï¿½ï¿½ï¿½
 
 	UFUNCTION(BlueprintCallable, Category = "Auto LockOn")
-	void FindNearbyGiants();											// ÁÖº¯ GiantCollisionSocketÀ» Å½»ö
+	void FindNearbyGiants();											// ï¿½Öºï¿½ GiantCollisionSocketï¿½ï¿½ Å½ï¿½ï¿½
 
 	UFUNCTION(BlueprintCallable, Category = "Auto LockOn")
 	void CheckAimRay();
@@ -87,7 +90,7 @@ public:
 	void UpdateUIPosition(FVector2D ScreenPosition);
 
 	UFUNCTION(BlueprintCallable, Category = "Auto LockOn")
-	void AutoLockOn();													// ¿¡ÀÓÀÌ °¡¸®Å°´Â °÷ÀÌ °ÅÀÎÀÇ ºÎÀ§ Áß ÇÏ³ªÀÌ¸ç ÀÚµ¿ ·Ï¿Â ¹üÀ§ ÀÌ³»ÀÏ °æ¿ì ¾ÞÄ¿¸¦ ÀÚµ¿À¸·Î ºÎÀ§ÀÇ °ø°Ý ¹üÀ§ Áß¾Ó¿¡ ºÎÂø½ÃÄÑ ÁÜ
+	void AutoLockOn();													// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ï³ï¿½ï¿½Ì¸ï¿½ ï¿½Úµï¿½ ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¿ï¿½ï¿½ ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß¾Ó¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 
 
 	UFUNCTION(BlueprintCallable, Category = "Camera")
@@ -95,8 +98,14 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
-	// TickÀ» È°¼ºÈ­ÇÏ±â À§ÇÑ ÇÃ·¡±×
+	// Tickï¿½ï¿½ È°ï¿½ï¿½È­ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½
 	virtual void SetActorTickEnabled(bool bEnabled);
+
+public:
+	void SpawnNiagaraSystem();
+
+	UFUNCTION()
+	void OnNiagaraSystemFinished(UNiagaraComponent* System);
 	
 private:
 	FTimerHandle TimerHandle;
@@ -108,8 +117,8 @@ protected:
 	FVector BoostDirection;
 	FVector TargetVec;
 
-	const float MaxDistance = 10000.0f;  // ÃÖ´ë °Å¸®
-	const float MaxTime = 4.0f;          // ÃÖ´ë ½Ã°£
+	const float MaxDistance = 10000.0f;  // ï¿½Ö´ï¿½ ï¿½Å¸ï¿½
+	const float MaxTime = 4.0f;          // ï¿½Ö´ï¿½ ï¿½Ã°ï¿½
 
 
 protected:
@@ -137,4 +146,12 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Attack")
 	bool bIsStraightBoosting;
+
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Niagara")
+	UNiagaraComponent* NiagaraComponent;
+	
+	UPROPERTY(EditAnywhere, Category = "Niagara")
+	UNiagaraSystem* AttackEffectNiagara;
+	
 };
