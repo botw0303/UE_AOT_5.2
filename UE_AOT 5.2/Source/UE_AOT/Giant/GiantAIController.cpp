@@ -44,6 +44,11 @@ void AGiantAIController::StopAI()
 	}
 }
 
+void AGiantAIController::MoveToTarget(FVector TargetLocation)
+{
+	MoveToLocation(TargetLocation, 100.f);
+}
+
 void AGiantAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);

@@ -3,3 +3,7 @@
 
 #include "Animation/AOTAnimInstance.h"
 
+void UAOTAnimInstance::AnimNotify_ReleaseAttack()
+{
+	bIsAttack = false;
+}
