@@ -18,31 +18,21 @@
 AAOTCharacterPlayer::AAOTCharacterPlayer()
 {
 	SetActorTickEnabled(true);
-
-	TargetWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Widget"));
-	TargetWidget->SetupAttachment(GetMesh());
-
-	static ConstructorHelpers::FClassFinder<UUserWidget> TargetWidgetRef(TEXT("/Game/Player/UI/WBP_TargetWidget.WBP_TargetWidget_C"));
-	if (TargetWidgetRef.Class)
-	{
-		TargetWidget->SetWidgetClass(TargetWidgetRef.Class);
-		TargetWidget->SetWidgetSpace(EWidgetSpace::Screen);
-		TargetWidget->SetDrawSize(FVector2D(100.0f, 60.0f));
-		TargetWidget->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	}
 }
 
 void AAOTCharacterPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//APlayerController* PlayerController = CastChecked<APlayerController>(GetController());
-	//if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-	//{
-	//	Subsystem->AddMappingContext(DefaultMappingContext, 0);
-	//}
+	if (TargetWidgetBPActor)
+	{
+		FVector SpawnLocation = GetActorLocation() + FVector(0, 0, 100);
+		FRotator SpawnRotation = FRotator::ZeroRotator;
 
-	//GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AAOTCharacterPlayer::CheckAimRay, 0.01f, true);
+		AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(TargetWidgetBPActor, SpawnLocation, SpawnRotation);
+
+		TargetWidgetActor = SpawnedActor;
+	}
 }
 
 void AAOTCharacterPlayer::SetCameraComponent(UCameraComponent* CameraComponent)
@@ -53,10 +43,6 @@ void AAOTCharacterPlayer::SetCameraComponent(UCameraComponent* CameraComponent)
 void AAOTCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	//UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
-
-	//EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AAOTCharacterPlayer::Attack);
 }
 
 void AAOTCharacterPlayer::CheckAnchoredTargetIsGiant(FVector Start)
@@ -141,7 +127,7 @@ void AAOTCharacterPlayer::Attack()
 		for (const auto& OverlapResult : OverlapResults)
 		{
 			const AActor* Actor = Cast<AActor>(OverlapResult.GetActor());
-			if(Actor == nullptr)
+			if (Actor == nullptr)
 			{
 				continue;
 			}
@@ -154,7 +140,7 @@ void AAOTCharacterPlayer::Attack()
 
 			if (AGiantCollisionSocket* CollisionSocket = Cast<AGiantCollisionSocket>(OverlapResult.GetActor()))
 			{
-				if(!CollisionSocket->bIsValid)
+				if (!CollisionSocket->bIsValid)
 				{
 					continue;
 				}
@@ -225,84 +211,70 @@ void AAOTCharacterPlayer::CheckAimRay()
 
 #endif
 
-//	//start와 end 가 중요
-//	FVector _Location;
-//	FRotator _Rotation;
-//	FHitResult _HitOut;
-//
-//	//카메라가 보고 있는 위치
-//	GetController()->GetPlayerViewPoint(_Location, _Rotation);
-//	FVector _Start = _Location;
-//	int ViewDis = 2000;
-//	FVector _End = _Location + (_Rotation.Vector() * ViewDis); // 2000은 무작위 거리
-//	FCollisionQueryParams _traceParams; //trace의 params들
-//	bool bHit = GetWorld()->LineTraceSingleByChannel(_HitOut, _Start, _End, GAMETRACECHANNEL, _traceParams); // 충돌 결과, 시작점, 결과, 콜리전채널, params(안넣으면 디폴트)
-//
-//#if ENABLE_DRAW_DEBUG
-//	
-//	DrawDebugLine(GetWorld(), _Start, _End, FColor::Green, false, 2.0f);
-//
-//#endif
-
 	if (bHit)
 	{
-
-		UE_LOG(LogTemp, Log, TEXT("Hit"));
-
 		const AActor* Actor = Cast<AActor>(HitResult.GetActor());
 		if (Actor)
 		{
-			UE_LOG(LogTemp, Log, TEXT("Hit ActorName: %s"), *Actor->GetName());
 			AGiantCollisionSocket* CollisionSocket = Cast<AGiantCollisionSocket>(HitResult.GetActor());
 
 			if (CollisionSocket)
 			{
 				if (CollisionSocket->bIsValid)
 				{
-					UE_LOG(LogTemp, Log, TEXT("Hit SocketName: %s"), *CollisionSocket->GetName());
-					FVector SocketLocation = HitResult.GetActor()->GetActorLocation();
-					ShowObjectLocationOnUI(SocketLocation);
+					FVector SocketLocation = CollisionSocket->GetActorLocation();
+					TargetWidgetActor->SetActorHiddenInGame(false);
+					TargetWidgetActor->SetActorLocation(SocketLocation);
+					return;
 				}
-			}
-			else
-			{
-				UE_LOG(LogTemp, Log, TEXT("It's not GiantSocket"));
-				TargetWidget->GetUserWidgetObject()->SetVisibility(ESlateVisibility::Hidden);
 			}
 		}
 	}
+
+	TargetWidgetActor->SetActorHiddenInGame(true);
 }
 
 
 
 void AAOTCharacterPlayer::ShowObjectLocationOnUI(FVector SocketLocation)
 {
-	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	/*APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 
 	if (PlayerController)
 	{
+		UE_LOG(LogTemp, Log, TEXT("UITEST1"));
+
 		FVector2D ScreenPos;
 		bool bIsOnScreen = PlayerController->ProjectWorldLocationToScreen(SocketLocation, ScreenPos);
 
 		if (bIsOnScreen)
 		{
+			UE_LOG(LogTemp, Log, TEXT("UITEST2"));
+
+			UE_LOG(LogTemp, Log, TEXT("ScreenLocation: %s"), *ScreenPos.ToString());
+
 			UpdateUIPosition(ScreenPos);
 		}
 		else
 		{
 			TargetWidget->GetUserWidgetObject()->SetVisibility(ESlateVisibility::Hidden);
 		}
-	}
+	}*/
 }
 
 void AAOTCharacterPlayer::UpdateUIPosition(FVector2D ScreenPosition)
 {
-	if (TargetWidget)
-	{
-		//TargetWidget->SetPositionInViewport(ScreenPosition);
-		TargetWidget->GetUserWidgetObject()->SetVisibility(ESlateVisibility::Visible);
-		TargetWidget->GetUserWidgetObject()->SetPositionInViewport(ScreenPosition);
-	}
+	//if (TargetWidget)
+	//{
+	//	UE_LOG(LogTemp, Log, TEXT("UITEST3"));
+	//	//TargetWidget->SetPositionInViewport(ScreenPosition);
+	//	TargetWidget->GetUserWidgetObject()->SetVisibility(ESlateVisibility::Visible);
+
+	//	UE_LOG(LogTemp, Log, TEXT("UILocation: %s"), *ScreenPosition.ToString());
+
+	//	//TargetWidget->GetUserWidgetObject()->SetPositionInViewport(ScreenPosition);
+	//	TargetWidget->SetWorldLocation(FVector(ScreenPosition.X, ScreenPosition.Y, 0));
+	//}
 }
 
 void AAOTCharacterPlayer::AutoLockOn()

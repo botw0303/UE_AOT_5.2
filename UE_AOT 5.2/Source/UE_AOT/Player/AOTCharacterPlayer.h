@@ -47,8 +47,8 @@ public:
 
 	UCameraComponent* Camera;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "AutoLockOn")
-	TObjectPtr<class UWidgetComponent> TargetWidget;
+	UPROPERTY(EditDefaultsOnly, Category = "AutoLockOn")
+	TSubclassOf<AActor> TargetWidgetBPActor; 
 
 public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -95,6 +95,8 @@ public:
 private:
 	FTimerHandle TimerHandle;
 	float LastDistance;
+
+	AActor* TargetWidgetActor;
 
 protected:
 	FVector BoostDirection;
