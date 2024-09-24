@@ -11,6 +11,6 @@ public class UE_AOT : ModuleRules
 		PublicIncludePaths.AddRange(new string[] { "UE_AOT" });
 
         PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "EnhancedInput",
-                                                            "NavigationSystem", "AIModule", "GameplayTasks"});
+                                                            "NavigationSystem", "AIModule", "GameplayTasks", "Niagara"});
     }
 }

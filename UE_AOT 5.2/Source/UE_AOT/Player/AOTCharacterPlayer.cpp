@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include "AOTCharacterPlayer.h"
 #include "Player/AOTCharacterPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -10,12 +11,23 @@
 #include <Collision/CollisionDefine.h>
 #include "Physics/AOTCollision.h"
 #include "Giant/GiantCharacter.h"
+#include "NiagaraSystem.h"
+#include <NiagaraFunctionLibrary.h>
+#include <NiagaraComponent.h>
 #include "GameFramework/CharacterMovementComponent.h"
 #include <Giant/CollisionSocket/GiantCollisionSocket.h>
 
 AAOTCharacterPlayer::AAOTCharacterPlayer()
 {
 	SetActorTickEnabled(true);
+
+	static ConstructorHelpers::FObjectFinder<UNiagaraSystem> AttackEffectNiagaraRef(
+		TEXT("/Game/Effect/Slash/SlashNiagara.SlashNiagara")
+	);
+	if(AttackEffectNiagaraRef.Object)
+	{
+		AttackEffectNiagara = AttackEffectNiagaraRef.Object;
+	}
 }
 
 void AAOTCharacterPlayer::BeginPlay()
@@ -133,7 +145,8 @@ void AAOTCharacterPlayer::Attack()
 				{
 					continue;
 				}
-				
+
+				SpawnNiagaraSystem();
 				CollisionSocket->OnHit();
 				return;
 			}
@@ -173,3 +186,30 @@ void AAOTCharacterPlayer::SetActorTickEnabled(bool bEnabled)
 	PrimaryActorTick.SetTickFunctionEnable(bEnabled);
 }
 
+void AAOTCharacterPlayer::SpawnNiagaraSystem()
+{
+	if(AttackEffectNiagara)
+	{
+		NiagaraComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+			GetWorld(),
+			AttackEffectNiagara,
+			GetActorLocation(),
+			GetActorRotation()
+		);
+
+		if(NiagaraComponent)
+		{
+			NiagaraComponent->OnSystemFinished.AddDynamic(this, &AAOTCharacterPlayer::OnNiagaraSystemFinished);
+		}
+	}
+}
+
+void AAOTCharacterPlayer::OnNiagaraSystemFinished(UNiagaraComponent* System)
+{
+	if(System)
+	{
+		System->DestroyComponent();
+	}
+
+	NiagaraComponent = nullptr;
+}
